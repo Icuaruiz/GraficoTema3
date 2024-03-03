@@ -2,9 +2,134 @@
 title: "GraficoTema3"
 author: "Iker Cuadros Ruiz"
 date: "2024-02-19"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
+subtitle: "Tratamiento de Datos, Grado en Ciencia de Datos - UV"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 0. Comprobación e instalación de paquetes necesarios.
+
+```{r include=FALSE}
+
+# Borramos los datos del historial
+rm(list = ls())
+
+# Especificamos las librerías necesarias en esta lista
+packages = c("readr", "ggplot2", "dplyr", "shiny", "plotly", "shinydashboard")
+
+# Check si cada package esta en la mquina
+# Si no lo están se instalará
+package.check <- lapply(packages, FUN = 
+  function(x) {
+    if (!require(x, character.only = TRUE)) {
+      install.packages(x, 
+                       dependencies = TRUE,
+                       repos = 'http://cran.rediris.es')
+      library(x, character.only = TRUE)
+    }
+  })
+
+# verify they are loaded
+search()
+```
+
+## 1. Importación de datos.
+
+```{r}
+
+# library(readr)
+df.covid <- read_csv("data/owid-covid-data.csv", 
+    col_types = cols(date = col_date(format = "%Y-%m-%d")), 
+    na = "NA")
+
+df.covid$location <- as.factor(df.covid$location)
+
+```
+
+## 2. Filtrado de Datos
+
+```{r}
+
+# library(dplyr)
+
+# Se cogen los datos de los paises a analizar
+countries <- c("Spain", "United States", "United Kingdom", "Japan", "France")
+
+df.covid.filtered <- df.covid %>%
+  subset(location %in% countries
+         & new_deaths > 0
+         & date >= as.Date("2020-02-13")
+         & date <= as.Date("2022-02-18"))
+
+df.covid.filt.spain <- df.covid.filtered %>%
+  subset(location == "Spain")
+
+# df.covid.filtered <- df.covid.filtered %>%
+#  subset(location != "Spain")
+
+```
+
+## 3. Creación del Gráfico
+
+```{r}
+
+# library(ggplot2)
+
+# Creación del grafico
+grafico <- ggplot(df.covid.filtered, aes(x = date, y = new_deaths_per_million/7)) +
+  geom_line( aes(col= location), linewidth = 0.75, alpha = 0.5) +
+  geom_line(data = df.covid.filt.spain, color = "red",linewidth = 1.25) +
+  scale_x_date(date_labels = ("%b %d,%Y"))
+
+
+# Adición de las etiquetas necesatias
+grafico <- grafico +
+  labs(title = "Grupo N: Daily new confirmed COVID-19 deaths per million people",
+       subtitle = "7-day rolling average.\nFor some countries the number of confirmed deaths is much lower than the true number of deaths.\nThis is because of limited testing and challenges in the attribution of the cause of death",
+       x = "",
+       y = "",
+       col = "País",
+       alt = "Deaths evolution graphic",
+       caption = "Source: Johns Hopkins University CSSE COVID-19 Data") + 
+  theme_minimal()
+
+# Cambio del tipo de letra de las etiquetas
+grafico <- grafico + 
+  theme(text = element_text(family = "sans"),
+        plot.title = element_text(size = 14, face = "bold"),
+        plot.subtitle = element_text(size = 12),
+        plot.caption =  element_text(size = 8, face = "italic"))
+grafico
+
+ggsave(filename = "./figures/prueba.pdf", plot = grafico, width = 8, height = 6)
+
+```
+
+```{r}
+
+# library(shiny)
+# library(ggplot2)
+# library(plotly)
+# library(shinydashboard)
+
+# Definición de la UI
+ui <- dashboardPage(
+  dashboardHeader(),
+  dashboardSidebar(),
+  dashboardBody()
+)
+
+# Definición del server
+server <- function(input, output) {
+  
+}
+
+# Llamamos a la aplicación
+shinyApp(ui = ui, server = server)
+
 ```
