@@ -1,6 +1,6 @@
 ---
 title: "GraficoTema3"
-author: "Iker Cuadros Ruiz"
+author: "Iker Cuadros Ruiz, Guillem García Garro"
 date: "2024-02-19"
 output:
   pdf_document: default
@@ -104,6 +104,8 @@ grafico <- grafico +
         plot.title = element_text(size = 14, face = "bold"),
         plot.subtitle = element_text(size = 12),
         plot.caption =  element_text(size = 8, face = "italic"))
+grafico <- grafico +
+  scale_y_continuous(breaks = seq(0, max(df.covid.filtered$new_deaths_per_million/7), by = 2))
 grafico
 
 ggsave(filename = "./figures/prueba.pdf", plot = grafico, width = 8, height = 6)
