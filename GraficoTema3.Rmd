@@ -97,8 +97,7 @@ grafico <- ggplot(df.covid.filtered, aes(x = date, y = new_deaths_smoothed_per_m
   geom_line( aes(col= location), linewidth = 0.5, alpha = 0.65) +
   geom_line(data = df.covid.filt.spain, linewidth = 1, col = "red") +
   scale_color_manual(values = colores) + 
-  scale_x_date(date_labels = ("%b %d,%Y")#, breaks = as.Date(c("2020-02-13","2020-08-08", "2020-11-16", "2021-02-24", "2021-06-4", "2021-09-12", "2022-02-28"))
-               ) +
+  scale_x_date(date_labels = ("%b %d,%Y"), breaks = "9 month") +
   scale_y_continuous(limits = c(0,21), breaks = seq(0, max(df.covid.filtered$new_deaths_per_million/7), by = 2))
 
 # Adición de las etiquetas necesatias
