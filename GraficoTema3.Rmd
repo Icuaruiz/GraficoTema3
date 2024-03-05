@@ -116,7 +116,7 @@ grafico <- grafico +
   theme(text = element_text(family = "sans"),
         plot.title = element_text(size = 14, face = "bold"),
         # plot.subtitle = element_text(size = 12),
-        plot.caption =  element_text(size = 8, face = "italic", hjust = -.2))
+        plot.caption =  element_text(size = 8, face = "italic", hjust = 0))
 grafico
 
 ggplotly(grafico)
