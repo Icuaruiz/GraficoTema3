@@ -1,6 +1,6 @@
 ---
 title: "GraficoTema3"
-author: "Iker Cuadros Ruiz, Guillem García Garro"
+author: "Iker Cuadros Ruiz, Guillem García Garro, Carles Pascual i Sivera"
 date: "2024-02-19"
 output:
   pdf_document: default
