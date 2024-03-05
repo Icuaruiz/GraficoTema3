@@ -58,19 +58,31 @@ df.covid$location <- as.factor(df.covid$location)
 # library(dplyr)
 
 # Se cogen los datos de los paises a analizar
-countries <- c("Spain", "United States", "United Kingdom", "Japan", "France")
+countries <- c("Spain", "United States", "United Kingdom", "Japan", "France", "Italy", "Germany", "Canada")
+countries <- sort(countries, decreasing = FALSE)
 
+# Definición de la lista de colores en funcion de la longitud de la lista
+# Se poner el color rojo en la tercera posición porque es donde se queda
+# españa al ordenar los paises en la leyenda
+colores <- c()
+for ( i in 1:(length(countries)-1) ) {
+  colores <- c(colores, sample(colors(1), 1))
+}
+
+# Buscar la posición en la que se encuentra españa, para asignarle 
+# el color rojo en la lista de valores
+posEsp <- match("Spain", countries)
+
+colores <- c(colores[1:posEsp-1], "red", colores[posEsp:length(colores)])
+
+# Filtrado de datos por paises requeridos y fecha inicial
 df.covid.filtered <- df.covid %>%
   subset(location %in% countries
          & new_deaths > 0
-         & date >= as.Date("2020-02-13")
-         & date <= as.Date("2022-02-18"))
+         & date >= as.Date("2020-02-13"))
 
 df.covid.filt.spain <- df.covid.filtered %>%
   subset(location == "Spain")
-
-# df.covid.filtered <- df.covid.filtered %>%
-#  subset(location != "Spain")
 
 ```
 
@@ -81,11 +93,13 @@ df.covid.filt.spain <- df.covid.filtered %>%
 # library(ggplot2)
 
 # Creación del grafico
-grafico <- ggplot(df.covid.filtered, aes(x = date, y = new_deaths_per_million/7)) +
-  geom_line( aes(col= location), linewidth = 0.75, alpha = 0.5) +
-  geom_line(data = df.covid.filt.spain, color = "red",linewidth = 1.25) +
-  scale_x_date(date_labels = ("%b %d,%Y"))
-
+grafico <- ggplot(df.covid.filtered, aes(x = date, y = new_deaths_smoothed_per_million)) +
+  geom_line( aes(col= location), linewidth = 0.5, alpha = 0.65) +
+  geom_line(data = df.covid.filt.spain, linewidth = 1, col = "red") +
+  scale_color_manual(values = colores) + 
+  scale_x_date(date_labels = ("%b %d,%Y")#, breaks = as.Date(c("2020-02-13","2020-08-08", "2020-11-16", "2021-02-24", "2021-06-4", "2021-09-12", "2022-02-28"))
+               ) +
+  scale_y_continuous(limits = c(0,21), breaks = seq(0, max(df.covid.filtered$new_deaths_per_million/7), by = 2))
 
 # Adición de las etiquetas necesatias
 grafico <- grafico +
@@ -103,8 +117,10 @@ grafico <- grafico +
   theme(text = element_text(family = "sans"),
         plot.title = element_text(size = 14, face = "bold"),
         plot.subtitle = element_text(size = 12),
-        plot.caption =  element_text(size = 8, face = "italic"))
+        plot.caption =  element_text(size = 8, face = "italic", hjust = -.2))
 grafico
+
+ggplotly(grafico)
 
 ggsave(filename = "./figures/prueba.pdf", plot = grafico, width = 8, height = 6)
 
