@@ -1,6 +1,6 @@
 ---
 title: "GraficoTema3"
-author: "Iker Cuadros Ruiz"
+author: "Iker Cuadros Ruiz, Guillem García Garro"
 date: "2024-02-19"
 output:
   pdf_document: default
@@ -116,7 +116,7 @@ grafico <- grafico +
 grafico <- grafico + 
   theme(text = element_text(family = "sans"),
         plot.title = element_text(size = 14, face = "bold"),
-        plot.subtitle = element_text(size = 12),
+        # plot.subtitle = element_text(size = 12),
         plot.caption =  element_text(size = 8, face = "italic", hjust = -.2))
 grafico
 
