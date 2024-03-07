@@ -55,7 +55,7 @@ Posteriormente, convierte la variable de ubicación en una variable categórica,
 ## Esta sentencia recoge los datos directamente desde la dirección web
 # df.covid <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv", 
 #     col_types = cols(date = col_date(format = "%Y-%m-%d")), 
-#     na = "NA")
+#     na = "NA").
 
 df.covid <- read_csv("data/owid-covid-data.csv", 
     col_types = cols(date = col_date(format = "%Y-%m-%d")), 
