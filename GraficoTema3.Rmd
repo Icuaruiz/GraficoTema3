@@ -3,8 +3,10 @@ title: "GraficoTema3"
 author: "Iker Cuadros Ruiz, Guillem García Garro, Carles Pascual i Sivera"
 date: "2024-02-19"
 output:
-  html_document: default
-  pdf_document: default
+  html_document:
+    toc: true
+  pdf_document:
+    toc: true
 subtitle: "Tratamiento de Datos, Grado en Ciencia de Datos - UV"
 ---
 
@@ -49,6 +51,11 @@ Se puede observar que se especifica el formato de la variable de fecha para que 
 Posteriormente, convierte la variable de ubicación en una variable categórica, lo que facilitará ciertas operaciones y visualizaciones con los datos.
 
 ```{r}
+
+## Esta sentencia recoge los datos directamente desde la dirección web
+# df.covid <- read_csv("https://covid.ourworldindata.org/data/owid-covid-data.csv", 
+#     col_types = cols(date = col_date(format = "%Y-%m-%d")), 
+#     na = "NA")
 
 df.covid <- read_csv("data/owid-covid-data.csv", 
     col_types = cols(date = col_date(format = "%Y-%m-%d")), 
@@ -142,37 +149,20 @@ grafico <- grafico +
 # Cambio del tipo de letra de las etiquetas
 grafico <- grafico + 
   theme(text = element_text(family = "sans"),
-        plot.title = element_text(size = 14, face = "bold"),
-        # plot.subtitle = element_text(size = 12),
+        plot.title = element_text(size = 12, face = "bold"),
+        plot.subtitle = element_text(size = 10),
         plot.caption =  element_text(size = 8, face = "italic", hjust = 0))
 grafico
 
 ggsave(filename = "./figures/prueba.pdf", plot = grafico, width = 8, height = 6)
 
-ggplotly(grafico)
-
-```
-
-```{r}
-
-# library(shiny)
-# library(ggplot2)
-# library(plotly)
-# library(shinydashboard)
-
-# Definición de la UI
-ui <- dashboardPage(
-  dashboardHeader(),
-  dashboardSidebar(),
-  dashboardBody()
-)
-
-# Definición del server
-server <- function(input, output) {
-  
-}
-
-# Llamamos a la aplicación
-shinyApp(ui = ui, server = server)
+iGrafico <- ggplotly(grafico) %>%
+  layout(title = list(text = paste0(
+    'Grupo N: Daily new confirmed COVID-19 deaths per million people',
+    '<br>',
+    '<sup>',
+      '7-day rolling average. For some countries the number of confirmed deaths is much lower than the true number of deaths.\nThis is because of limited testing and challenges in the attribution of the cause of death',
+    '</sup>')))
+iGrafico
 
 ```
